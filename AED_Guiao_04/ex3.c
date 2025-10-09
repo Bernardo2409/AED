@@ -4,8 +4,8 @@
 int numbers(int a[], int size);
 
 int main(void) {
-    int a[] = {1, 2, 4, 8, 5, 6, 7, 8, 9, 10};
-    int verif = numbers(a, 10);
+    int a[] = {1, 3, 5, 4, 2, 1};
+    int verif = numbers(a, 6);
     printf("Resultado: %d\n", verif);
     return 0;
 }
@@ -13,24 +13,19 @@ int main(void) {
 int numbers(int a[], int size ) {
 
     assert(size > 2);
+    int counter = 0;
     int oper = 0;
-    int retornar = 1;
+    int n = 0;
 
-    int r = a[1] / a[0];
 
-    for ( int i = 2; i < size ; i++) {
+    for ( int i = a[n] ; i < size - 2 ; n++ ) {
 
         oper++;
 
 
-        if ( a[i] != r * a[i-1]) {
-            retornar = 0;
-            break;
-        }
 
 
     };
 
     printf("Operações %d \n", oper);
-    return retornar;
 }

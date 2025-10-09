@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-// Declaração da função
 int numbers(int a[], int size);
 
 int main(void) {
