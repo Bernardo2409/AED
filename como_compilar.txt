@@ -1,0 +1,3 @@
+cc -Wall sizes.c -o sizes -lm
+
+./sizes
