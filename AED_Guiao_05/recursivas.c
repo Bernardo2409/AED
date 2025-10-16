@@ -44,14 +44,38 @@ int FunctionT3 (int n) {
 
 int main (void) {
 
-
-    printf(" Função 1 \n");
+    // Tratamento de dados funcao 1;
+    printf("\n");
+    printf("      Função 1 \n");
 
     for(int c = 1; c < 15;  c++) {
         printf(" n = %d  ", c);
         printf("Valor: %d  "  ,FunctionT1(c)  );
         printf( "Chamadas: %d \n" ,calls);
     }
+
+    // Tratamento de dados funcao 1;
+    printf("\n");
+    printf("        Função 2 \n");
+
+
+    for(int c = 1; c < 15;  c++) {
+        printf(" n = %d  ", c);
+        printf("Valor: %d  "  ,FunctionT2(c)  );
+        printf( "Chamadas: %d \n" ,calls);
+    }
+
+    // Tratamento de dados funcao 1;
+    printf("\n");
+    printf("        Função 3 \n");
+
+    for(int c = 1; c < 15;  c++) {
+        printf(" n = %d  ", c);
+        printf("Valor: %d  "  ,FunctionT3(c)  );
+        printf( "Chamadas: %d \n" ,calls);
+    }
+
+
 
 
     return 0;
