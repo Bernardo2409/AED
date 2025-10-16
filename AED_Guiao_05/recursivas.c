@@ -35,7 +35,7 @@ int FunctionT3 (int n) {
 
     if (n == 1) {
         return 1;
-    } else if ( n%2 == 0) {
+    } else if ( n%2 != 0) {
         return FunctionT3(n/2) + FunctionT3((n+1)/2) + 1;
     } else {
         return 2 * FunctionT3(n/2) + 1;
