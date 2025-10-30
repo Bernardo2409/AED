@@ -34,7 +34,16 @@ Date* DateCreate(int yy, int mm, int dd) {
   assert(DateIsValid(yy, mm, dd));
 
   Date* d;
-  // EDIT Date* d = ...
+  // EDIT ...
+  d = (Date*)malloc(sizeof(Date));
+
+  if (d == NULL) {
+    return NULL;
+  }
+
+  d->year = yy;
+  d->month = mm;
+  d->day = dd;
 
   assert(invariant(d));  // check invariant
   return d;
@@ -47,6 +56,9 @@ void DateDestroy(Date** pd) {
   assert(*pd != NULL);
 
   // EDIT ...
+  Date* d = *pd;
+  free(d);
+  *pd = NULL;
 }
 
 // table of month lengths in common and leap years
@@ -112,6 +124,27 @@ int DateParse(Date* d, const char* str, int FMT) {
 // Return an integer >0 if a>b, 0 if a==b and <0 if a<b.
 int DateCompare(const Date* a, const Date* b) {
   // EDIT ...
+  if (a->year > b->year) {
+    return 1;
+  }
+  if (a->year < b->year) {
+    return -1;
+  }
+  else {
+    if (a->month > b->month) {
+      return 1;
+    }
+    else if (a->month < b->month) {
+      return -1;
+    }
+    else if (a-> day > b->day) {
+      return 1;
+    } else if (a->day < b->day)
+    {
+      return -1;
+    }
+  
+  }
   return 0;
 }
 
@@ -121,6 +154,21 @@ void DateIncr(Date* d) {
   assert(DateCompare(d, &DateMAX) < 0);
 
   // EDIT ...
+  d->day++;
+  int dmax;
+  if (DateIsLeapYear(d->year))
+    dmax = monthLength[1][d->month-1];
+  else
+    dmax = monthLength[0] [ d->month-1];
+  if(d->day > dmax) {
+    d->day = 1;
+    d->month++;
+    if(d->month > 12) {
+      d->month = 1;
+      d->year++;
+    }
+
+  }
 
   assert(invariant(d));  // check invariant
 }
@@ -131,6 +179,17 @@ void DateDecr(Date* d) {
   assert(DateCompare(d, &DateMIN) > 0);
 
   // EDIT ...
+  if (--d->day == 0) {
+    if (d->month == 1) {
+      d->day = 31;
+      d->month = 12;
+      d->year--;
+    }
+    else {
+      d->month--;
+      d->day = monthLength[DateIsLeapYear(d->year)] [d->month-1];
+    }
+  }
 
   assert(invariant(d));  // check invariant
 }
