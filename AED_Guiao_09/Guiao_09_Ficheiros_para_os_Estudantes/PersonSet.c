@@ -39,7 +39,22 @@ PersonSet *PersonSetCreate() {
   // You must allocate space for the struct and create an empty persons list!
   // COMPLETE ...
 
-  return NULL;
+   PersonSet* p = (PersonSet*)malloc(sizeof(PersonSet));
+
+  if(p == NULL) {
+    perror("PersonSetCreate - struc");
+    return NULL;
+  }
+
+  p->persons = ListCreate(cmpP);
+  if (p->persons == NULL) {
+    free(p);
+    perror("PersonSetCreate- storage");
+    return NULL;
+  }
+
+  return p;
+
 }
 
 // Destroy PersonSet *pps
@@ -75,6 +90,9 @@ static int search(const PersonSet *ps, int id) {
 // Do nothing if *ps already contains a person with the same id.
 void PersonSetAdd(PersonSet *ps, Person *p) {
   // COMPLETE ...
+  ListInsert(ps->persons, p);
+
+  ListTestInvariants(ps->persons);  //tests to see if it's all ok
 }
 
 // Pop one person out of *ps.
@@ -82,8 +100,11 @@ Person *PersonSetPop(PersonSet *ps) {
   assert(!PersonSetIsEmpty(ps));
   // It is easiest to pop and return the person in the first position!
   // COMPLETE ...
+  
 
-  return NULL;
+  
+  return (Person*) ListRemoveHead(ps->persons);
+
 }
 
 // Remove the person with given id from *ps, and return it.
@@ -91,6 +112,9 @@ Person *PersonSetPop(PersonSet *ps) {
 Person *PersonSetRemove(PersonSet *ps, int id) {
   // You may call search here!
   // COMPLETE ...
+
+  if(search(ps, id) == 0)
+    return ListRemoveCurrent(ps->persons);
 
   return NULL;
 }
@@ -116,6 +140,18 @@ PersonSet *PersonSetUnion(const PersonSet *ps1, const PersonSet *ps2) {
 
   // Merge the two sorted lists (similar to mergesort).
   // COMPLETE ...
+  if (ps == NULL)
+    return NULL;
+  ListMoveToHead(ps1->persons);
+  while (ListCurrentIsInside(ps1->persons)) {
+    ListInsert(ps->persons, ListGetCurrentItem(ps1->persons));
+    ListMoveToNext(ps1->persons);
+  }
+  ListMoveToHead(ps2->persons);
+  while (ListCurrentIsInside(ps2->persons)) {
+    ListInsert(ps->persons, ListGetCurrentItem(ps2->persons));
+    ListMoveToNext(ps2->persons);
+  }
 
   return ps;
 }
