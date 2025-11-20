@@ -55,9 +55,12 @@ static void _treeDestroy(struct _BSTreeNode** pRoot) {
 // 2) Depth-first pre-order,
 // 3) Depth-first in-order or
 // 4) Depth-first post-order?
-// A: ...
+// A: 4) Depth-first post-order
 // Q: Is this the best order here? Why?
-// A: ...
+// A: Sim. A ordem pós-ordem garante que os filhos são processados antes do pai,
+//    o que é importante para operações como destruição (evita use-after-free) e
+//    assegura que todos os elementos de sub-árvores são colocados na fila antes
+//    do respectivo nó pai.
 
 void BSTreeDestroy(BSTree** pHeader) {
   BSTree* header = *pHeader;
@@ -86,8 +89,18 @@ unsigned int BSTreeGetNumberOfNodes(const BSTree* header) {
 // (Internal RECURSIVE function, that can be used for checking.)
 static int _treeGetHeightREC(const struct _BSTreeNode* root) {
   // COMPLETE
-  // ...
-  return -1;
+  // Altura = número de arcos desde a raíz até à folha de maior indice
+
+  if (root == NULL) {
+    return -1;
+  }
+  int leftH = _treeGetHeightREC(root->left); // calcula a altura do ramo esquerdo
+  int rightH = _treeGetHeightREC(root->right); // calcula a altura do ramo direito
+
+
+
+  return 1 + (leftH > rightH ? leftH : rightH); //devolve a maior altura calculada mais 1 (arco até ao filho)
+  
 }
 
 // Internal function that acccesses the height field, if the node exists
@@ -112,9 +125,12 @@ void* BSTreeGetMin(const BSTree* header) {
   assert(header != NULL);
   assert(!BSTreeIsEmpty(header));
 
-  // COMPLETE the function with an ITERATIVE solution.
-  // ...
-  return NULL;
+  struct _BSTreeNode* current = header->root;
+
+  while (current->left != NULL) {
+    current = current->left;
+  }
+  return current->item;
 }
 
 // Finds and returns the largest item stored in the (sub-)tree rooted in the
@@ -123,10 +139,10 @@ void* BSTreeGetMin(const BSTree* header) {
 static void* _treeGetMax(const struct _BSTreeNode* root) {
   assert(root != NULL);
 
-  // COMPLETE the function with a RECURSIVE solution.
-  // ...
-
-  return NULL;
+  if (root->right == NULL) {
+    return root->item;
+  }
+  return _treeGetMax(root->right);
 }
 
 // Finds and returns the largest item stored in the tree.
@@ -147,8 +163,14 @@ void* BSTreeSearch(const BSTree* header, const void* item) {
 
   struct _BSTreeNode* current = header->root;
   while (current != NULL) {
-    // COMPLETE THE LOOP.
-    // ...
+    int cmp = header->compare(item, current->item);
+    if (cmp == 0) {
+      return current->item;
+    } else if (cmp < 0) {
+      current = current->left;
+    } else {
+      current = current->right;
+    }
   }
   return NULL;
 }
@@ -404,20 +426,22 @@ int BSTreeRemove(BSTree* header, const void* item) {
 
 // Traverses the tree recursively and adds the items to a QUEUE.
 static void _BSTreeAddItems(const struct _BSTreeNode* p, Queue* q) {
-  if (p == NULL) {
-    return;
-  }
-  // COMPLETE
-  // ...
+  if (p == NULL) return;
+  // COMPLETE...
+  _BSTreeAddItems(p->left, q);
+  QueueEnqueue(q, p->item);
+  _BSTreeAddItems(p->right, q);
 }
 // Q: What kind of tree traversal is this function doing?
 // 1) Breadth-first,
 // 2) Depth-first pre-order,
 // 3) Depth-first in-order or
 // 4) Depth-first post-order?
-// A: ...
+// A: 4) Depth-first post-order
 // Q: Is this the required order here? Why?
-// A: ...
+// A: Yes. Post-order ensures children are destroyed before their parent, preventing
+//    use-after-free and guaranteeing proper deallocation of the whole subtree.
+
 
 // Returns a QUEUE with the ordered tree elements
 // or an EMPTY QUEUE, if the tree is empty.
