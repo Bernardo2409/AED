@@ -163,6 +163,8 @@ void* BSTreeSearch(const BSTree* header, const void* item) {
 
   struct _BSTreeNode* current = header->root;
   while (current != NULL) {
+    // COMPLETE THE LOOP
+    // ...
     int cmp = header->compare(item, current->item);
     if (cmp == 0) {
       return current->item;
@@ -437,10 +439,10 @@ static void _BSTreeAddItems(const struct _BSTreeNode* p, Queue* q) {
 // 2) Depth-first pre-order,
 // 3) Depth-first in-order or
 // 4) Depth-first post-order?
-// A: 4) Depth-first post-order
+// A: 3)
 // Q: Is this the required order here? Why?
-// A: Yes. Post-order ensures children are destroyed before their parent, preventing
-//    use-after-free and guaranteeing proper deallocation of the whole subtree.
+// A: Neste caso é a travessia necessária, por se tratar de uma BST (Binary Search Tree) 
+//    em que deve devolver os elementos por ordem.
 
 
 // Returns a QUEUE with the ordered tree elements

@@ -41,16 +41,34 @@ static void printP(void *p) { PersonPrintf((Person *)p, ""); }
 PersonSet *PersonSetCreate() {
   // You must allocate space for the struct and create an empty persons tree!
   // COMPLETE
-  // ...
 
-  return NULL;
+  PersonSet* p = (PersonSet*)malloc(sizeof(PersonSet));
+
+  if(p == NULL) {
+    return NULL;
+  }
+
+  p->persons = ListCreate(cmpP);
+  if (p->persons == NULL) {
+    free(p);
+    return NULL;
+  }
+
+  return p;
+
 }
 
 // Destroy PersonSet *pps
 void PersonSetDestroy(PersonSet **pps) {
-  assert(*pps != NULL);
-  // COMPLETE
-  // ...
+  assert(pps != NULL && *pps != NULL);
+  PersonSet *ps = *pps;
+
+  BSTreeTraverseINOrder(ps->persons, free);
+
+  BSTreeDestroy(&ps->persons);
+
+  free(ps);
+  *pps = NULL;
 }
 
 int PersonSetSize(const PersonSet *ps) {
@@ -81,8 +99,12 @@ static Person *search(const PersonSet *ps, int id) {
 // Add person *p to *ps.
 // Do nothing if *ps already contains a person with the same id.
 void PersonSetAdd(PersonSet *ps, Person *p) {
+  assert(ps != NULL && p != NULL);
+
   // COMPLETE
-  // ...
+  if (search(ps, p->id) != NULL)
+    return;
+  BSTreeInsert(ps->persons, p);
 }
 
 // Pop one person out of *ps.
@@ -90,9 +112,12 @@ Person *PersonSetPop(PersonSet *ps) {
   assert(!PersonSetIsEmpty(ps));
   // It is easiest to pop and return the first person in the set!
   // COMPLETE
-  // ...
 
-  return NULL;
+  // Get the leftmost (smallest) person and remove it from the tree.
+  Person *p = BSTreeGetLeftmost(ps->persons);
+  assert(p != NULL);
+  BSTreeRemove(ps->persons, p);
+  return p;
 }
 
 // Remove the person with given id from *ps, and return it.
@@ -102,7 +127,11 @@ Person *PersonSetRemove(PersonSet *ps, int id) {
   // COMPLETE
   // ...
 
-  return NULL;
+  Person *found = search(ps, id);
+  if (found == NULL)
+    return NULL;
+  // Remove the found person from the tree and return it.
+  return BSTreeRemove(ps->persons, found);
 }
 
 // Get the person with given id of *ps.
@@ -112,7 +141,7 @@ Person *PersonSetGet(const PersonSet *ps, int id) {
   // COMPLETE
   // ...
 
-  return NULL;
+  return search(ps, id);
 }
 
 // Return true (!= 0) if set contains person with given id, false otherwise.
@@ -126,7 +155,19 @@ PersonSet *PersonSetUnion(const PersonSet *ps1, const PersonSet *ps2) {
   PersonSet *ps = PersonSetCreate();
 
   // COMPLETE
-  // ...
+  if (ps == NULL)
+    return NULL;
+  ListMoveToHead(ps1->persons);
+  while (ListCurrentIsInside(ps1->persons)) {
+    ListInsert(ps->persons, ListGetCurrentItem(ps1->persons));
+    ListMoveToNext(ps1->persons);
+  }
+  ListMoveToHead(ps2->persons);
+  while (ListCurrentIsInside(ps2->persons)) {
+    ListInsert(ps->persons, ListGetCurrentItem(ps2->persons));
+    ListMoveToNext(ps2->persons);
+  }
+
 
   return ps;
 }
@@ -137,7 +178,9 @@ PersonSet *PersonSetIntersection(const PersonSet *ps1, const PersonSet *ps2) {
   PersonSet *ps = PersonSetCreate();
 
   // COMPLETE
-  // ...
+  if (ps == NULL)
+    return NULL;
+  
 
   return ps;
 }
